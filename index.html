@@ -234,7 +234,7 @@ button { margin-left: 10px; padding: 10px 20px; cursor: pointer; background: #00
     </style>
 </head>
 <body>
-
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <div class="browser-container">
     <div class="tabs-header">
         <div class="tab active" onclick="switchTab('vet')" data-role="vet">🐾 Ветеринар</div>
@@ -325,14 +325,19 @@ button { margin-left: 10px; padding: 10px 20px; cursor: pointer; background: #00
     }
 
     function renderMessages() {
-        const container = document.getElementById('chat-messages');
-        container.innerHTML = histories[currentRole].map(msg => `
-            <div class="message ${msg.type}">
-                ${msg.content}
-            </div>
-        `).join('');
-        container.scrollTop = container.scrollHeight;
-    }
+		const container = document.getElementById('chat-messages');
+		container.innerHTML = histories[currentRole].map(msg => {
+			const content = msg.type === 'ai' ? marked.parse(msg.content) : msg.content;
+			
+			return `
+				<div class="message ${msg.type}">
+					${content}
+				</div>
+			`;
+		}).join('');
+		container.scrollTop = container.scrollHeight;
+	}
+
 </script>
 
 </body>
