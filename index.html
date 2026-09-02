@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Консультант: Ветеринар, Лікар, Перекладач</title>
+    <style>
+        :root {
+            --bg-color: #f0f2f5;
+            --active-tab: #ffffff;
+            --inactive-tab: #dcdde1;
+            --border-color: #bdc3c7;
+            --text-color: #2f3640;
+            --accent-color: #3498db;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: var(--text-color);
+        }
+
+        .browser-container {
+            width: 90%;
+            max-width: 900px;
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Стилізація вкладок */
+        .tabs-header {
+            display: flex;
+            padding-left: 15px;
+            z-index: 2;
+        }
+
+        .tab {
+            padding: 12px 25px;
+            background: var(--inactive-tab);
+            border: 1px solid var(--border-color);
+            border-bottom: none;
+            border-radius: 12px 12px 0 0;
+            cursor: pointer;
+            position: relative;
+            margin-right: -10px; /* Ефект накладання */
+            transition: all 0.3s ease;
+            user-select: none;
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+
+        .tab.active {
+            background: var(--active-tab);
+            z-index: 10;
+            color: var(--text-color);
+            font-weight: 600;
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.05);
+            padding-top: 10px;
+            margin-top: -2px;
+        }
+
+        .tab:hover:not(.active) {
+            background: #e8e8e8;
+        }
+
+        /* Вікно чату */
+        .chat-window {
+            flex: 1;
+            background: var(--active-tab);
+            border: 1px solid var(--border-color);
+            border-radius: 0 12px 12px 12px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 5;
+            margin-top: -1px;
+        }
+
+        .messages-container {
+            flex: 1;
+            padding: 25px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-image: radial-gradient(#e5e7eb 0.5px, transparent 0.5px);
+            background-size: 20px 20px;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 12px 18px;
+            border-radius: 15px;
+            line-height: 1.5;
+            font-size: 15px;
+        }
+
+        .message.user {
+            align-self: flex-end;
+            background-color: var(--accent-color);
+            color: white;
+            border-bottom-right-radius: 2px;
+        }
+
+        .message.ai {
+            align-self: flex-start;
+            background-color: #f1f2f6;
+            color: var(--text-color);
+            border-bottom-left-radius: 2px;
+            border: 1px solid #e1e1e1;
+        }
+
+        /* Область введення */
+        .input-area {
+            padding: 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 10px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            outline: none;
+            font-size: 15px;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--accent-color);
+        }
+
+        button {
+            padding: 10px 25px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        button:disabled {
+            background-color: #bdc3c7;
+        }
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		:root {
+  --active-bg: #ffffff;
+  --inactive-bg: #e0e0e0;
+  --border-color: #ccc;
+}
+
+.browser-container {
+  max-width: 800px;
+  margin: 20px auto;
+  font-family: sans-serif;
+}
+
+.tabs-header {
+  display: flex;
+  padding-left: 10px;
+  gap: -5px; /* Невелике накладання */
+}
+
+.tab {
+  padding: 10px 25px;
+  background: var(--inactive-bg);
+  border: 1px solid var(--border-color);
+  border-bottom: none;
+  border-radius: 10px 10px 0 0;
+  cursor: pointer;
+  position: relative;
+  z-index: 1;
+  transition: all 0.2s;
+  margin-right: -10px; /* Створює ефект перекриття */
+}
+
+.tab.active {
+  background: var(--active-bg);
+  z-index: 10; /* Активна вкладка завжди зверху */
+  font-weight: bold;
+  box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+}
+
+.chat-window {
+  background: var(--active-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 0 0 10px 10px;
+  height: 500px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 5; /* Вище за неактивні вкладки, нижче за активну */
+  margin-top: -1px; /* Прибирає подвійну лінію кордону */
+}
+
+.messages-container {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  background: #f9f9f9;
+}
+
+.input-area {
+  display: flex;
+  padding: 15px;
+  border-top: 1px solid var(--border-color);
+}
+
+input { flex: 1; padding: 10px; border-radius: 5px; border: 1px solid #ddd; }
+button { margin-left: 10px; padding: 10px 20px; cursor: pointer; background: #007bff; color: white; border: none; border-radius: 5px; }
+
+    </style>
+</head>
+<body>
+
+<div class="browser-container">
+    <div class="tabs-header">
+        <div class="tab active" onclick="switchTab('vet')" data-role="vet">🐾 Ветеринар</div>
+        <div class="tab" onclick="switchTab('doctor')" data-role="doctor">🏥 Доктор</div>
+        <div class="tab" onclick="switchTab('translator')" data-role="translator">🌐 Перекладач</div>
+    </div>
+
+    <div class="chat-window">
+        <div id="chat-messages" class="messages-container">
+            <div class="message ai">Вітаю! Я ваш персональний помічник. Оберіть вкладку вище, щоб змінити мою спеціалізацію.</div>
+        </div>
+        
+        <div class="input-area">
+            <input type="text" id="user-input" placeholder="Введіть ваше запитання..." onkeypress="if(event.key==='Enter') handleSend()">
+            <button id="send-btn" onclick="handleSend()">Надіслати</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const WORKER_URL = 'aiexpert-fd1f.basyliydelcreatore-01.workers.dev';
+    
+    let currentRole = 'vet';
+    const histories = {
+        vet: [{ type: 'ai', content: 'Я готовий допомогти вашому улюбленцю. Що сталося?' }],
+        doctor: [{ type: 'ai', content: 'Я слухаю ваші скарги. Пам’ятайте, я лише ШІ-консультант.' }],
+        translator: [{ type: 'ai', content: 'Надішліть текст для перекладу.' }]
+    };
+
+    let userId = localStorage.getItem('vet_ai_user_id');
+    if (!userId) {
+        userId = crypto.randomUUID();
+        localStorage.setItem('vet_ai_user_id', userId);
+    }
+
+    function switchTab(role) {
+        if (currentRole === role) return;
+        currentRole = role;
+
+        document.querySelectorAll('.tab').forEach(t => {
+            t.classList.toggle('active', t.dataset.role === role);
+        });
+
+        renderMessages();
+    }
+
+    async function handleSend() {
+        const input = document.getElementById('user-input');
+        const btn = document.getElementById('send-btn');
+        const text = input.value.trim();
+
+        if (!text) return;
+
+        // Блокування інтерфейсу
+        input.value = '';
+        input.disabled = true;
+        btn.disabled = true;
+
+        // Додаємо повідомлення користувача
+        histories[currentRole].push({ type: 'user', content: text });
+        renderMessages();
+
+        try {
+            const response = await fetch(`${WORKER_URL}/api/chat`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-user-id': userId
+                },
+                body: JSON.stringify({ message: text, role: currentRole })
+            });
+
+            const data = await response.json();
+            
+            if (data.response) {
+                histories[currentRole].push({ type: 'ai', content: data.response });
+            } else {
+                throw new Error();
+            }
+        } catch (error) {
+            histories[currentRole].push({ type: 'ai', content: 'Вибачте, виникла помилка з’єднання з сервером.' });
+        } finally {
+            input.disabled = false;
+            btn.disabled = false;
+            renderMessages();
+            input.focus();
+        }
+    }
+
+    function renderMessages() {
+        const container = document.getElementById('chat-messages');
+        container.innerHTML = histories[currentRole].map(msg => `
+            <div class="message ${msg.type}">
+                ${msg.content}
+            </div>
+        `).join('');
+        container.scrollTop = container.scrollHeight;
+    }
+</script>
+
+</body>
+</html>
