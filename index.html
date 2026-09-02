@@ -231,6 +231,164 @@
 input { flex: 1; padding: 10px; border-radius: 5px; border: 1px solid #ddd; }
 button { margin-left: 10px; padding: 10px 20px; cursor: pointer; background: #007bff; color: white; border: none; border-radius: 5px; }
 
+       :root {
+            --bg-color: #e9ecef;
+            --active-tab: #ffffff;
+            --inactive-tab: #ced4da;
+            --border-color: #adb5bd;
+            --text-color: #212529;
+            --accent-color: #2b2d42; /* Більш професійний темний акцент */
+            --user-msg: #007bff;
+        }
+
+        * {
+            box-sizing: border-box;
+            border-radius: 0 !important; /* Глобальне скасування заокруглень */
+        }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: var(--text-color);
+        }
+
+        .browser-container {
+            width: 95%;
+            max-width: 1000px;
+            height: 85vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Стилізація вкладок */
+        .tabs-header {
+            display: flex;
+            padding-left: 0; /* Прибрано відступ зліва */
+            z-index: 2;
+        }
+
+        .tab {
+            padding: 12px 30px;
+            background: var(--inactive-tab);
+            border: 1px solid var(--border-color);
+            border-bottom: none;
+            cursor: pointer;
+            position: relative;
+            margin-right: -1px; /* Чітке прилягання без накладання */
+            transition: background 0.2s ease;
+            user-select: none;
+            font-size: 14px;
+            color: #495057;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tab.active {
+            background: var(--active-tab);
+            z-index: 10;
+            color: var(--text-color);
+            font-weight: 700;
+            border-top: 3px solid var(--accent-color); /* Акцент зверху */
+        }
+
+        .tab:hover:not(.active) {
+            background: #dee2e6;
+        }
+
+        /* Вікно чату */
+        .chat-window {
+            flex: 1;
+            background: var(--active-tab);
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 5px 5px 0px rgba(0,0,0,0.05); /* Рівна тінь */
+            position: relative;
+            z-index: 5;
+            margin-top: -1px;
+        }
+
+        .messages-container {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background-color: #ffffff;
+            /* Легка сітка для фону */
+            background-image: linear-gradient(#f8f9fa 1px, transparent 1px), linear-gradient(90deg, #f8f9fa 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .message {
+            max-width: 85%;
+            padding: 12px 15px;
+            line-height: 1.6;
+            font-size: 15px;
+            border: 1px solid var(--border-color);
+        }
+
+        .message.user {
+            align-self: flex-end;
+            background-color: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+        }
+
+        .message.ai {
+            align-self: flex-start;
+            background-color: #f8f9fa;
+            color: var(--text-color);
+        }
+
+        /* Область введення */
+        .input-area {
+            padding: 15px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 0; /* Прибираємо проміжок між інпутом і кнопкою для монолітності */
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            outline: none;
+            font-size: 15px;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--accent-color);
+            z-index: 2;
+        }
+
+        button {
+            padding: 0 30px;
+            background-color: var(--accent-color);
+            color: white;
+            border: 1px solid var(--accent-color);
+            cursor: pointer;
+            font-weight: 600;
+            transition: opacity 0.2s;
+            margin-left: -1px; /* Злиття з інпутом */
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        button:disabled {
+            background-color: var(--inactive-tab);
+            border-color: var(--border-color);
+            cursor: not-allowed;
+        }
+
     </style>
 </head>
 <body>
@@ -238,7 +396,7 @@ button { margin-left: 10px; padding: 10px 20px; cursor: pointer; background: #00
 <div class="browser-container">
     <div class="tabs-header">
         <div class="tab active" onclick="switchTab('vet')" data-role="vet">🐾 Ветеринар</div>
-        <div class="tab" onclick="switchTab('doctor')" data-role="doctor">🏥 Доктор</div>
+        <div class="tab" onclick="switchTab('doctor')" data-role="doctor">🏥 Лікар</div>
         <div class="tab" onclick="switchTab('translator')" data-role="translator">🌐 Перекладач</div>
     </div>
 
