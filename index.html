@@ -402,6 +402,9 @@ button { margin-left: 10px; padding: 10px 20px; cursor: pointer; background: #00
     </div>
 
     <div class="chat-window">
+		<div id="status-bar" style="background: #f8f9fa; padding: 8px 20px; font-size: 13px; border-bottom: 1px solid #ddd; color: #666;">
+			⏳ Перевірка доступності сервісу...
+		</div>
         <div id="chat-messages" class="messages-container">
             <div class="message ai">Вітаю! Я ваш персональний помічник. Оберіть вкладку вище, щоб змінити мою спеціалізацію.</div>
         </div>
@@ -440,48 +443,81 @@ button { margin-left: 10px; padding: 10px 20px; cursor: pointer; background: #00
         renderMessages();
     }
 
-    async function handleSend() {
-        const input = document.getElementById('user-input');
-        const btn = document.getElementById('send-btn');
-        const text = input.value.trim();
+	async function getDetailedErrorMessage(error) {
+		if (!navigator.onLine) {
+			return "📡 **Відсутній інтернет.** Будь ласка, перевірте підключення до мережі Wi-Fi або мобільного зв'язку.";
+		}
 
-        if (!text) return;
+		try {
+			const res = await fetch(`${WORKER_URL}/api/health`, {
+				headers: { 'x-user-id': userId }
+			});
+			const status = await res.json();
 
-        // Блокування інтерфейсу
-        input.value = '';
-        input.disabled = true;
-        btn.disabled = true;
+			if (status.remaining <= 0) {
+				return "🛑 **Денний ліміт вичерпано.** Ви використали всі 10 безкоштовних запитів на сьогодні. Повертайтеся завтра!";
+			}
 
-        // Додаємо повідомлення користувача
-        histories[currentRole].push({ type: 'user', content: text });
-        renderMessages();
+			if (status.geminiStatus === 'overloaded') {
+				return "⏳ **Google Gemini перевантажений.** Сервіс отримав забагато запитів одночасно. Спробуйте ще раз через 30-60 секунд.";
+			}
 
-        try {
-            const response = await fetch(`${WORKER_URL}/api/chat`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'x-user-id': userId
-                },
-                body: JSON.stringify({ message: text, role: currentRole })
-            });
+			if (status.geminiStatus === 'error') {
+				return "⚙️ **Проблема з API-ключем.** Здається, виникла технічна проблема на стороні конфігурації ШІ.";
+			}
+		} catch (e) {
+			return "🔌 **Сервер недоступний.** Не вдалося зв'язатися з обробником запитів. Можливо, сервіс на технічному обслуговуванні.";
+		}
 
-            const data = await response.json();
-            
-            if (data.response) {
-                histories[currentRole].push({ type: 'ai', content: data.response });
-            } else {
-                throw new Error();
-            }
-        } catch (error) {
-            histories[currentRole].push({ type: 'ai', content: 'Вибачте, виникла помилка з’єднання з сервером.' });
-        } finally {
-            input.disabled = false;
-            btn.disabled = false;
-            renderMessages();
-            input.focus();
-        }
-    }
+		return `⚠️ **Непередбачена помилка:** ${error.message || "З'єднання розірвано"}. Спробуйте оновити сторінку.`;
+	}
+
+	async function handleSend() {
+		const input = document.getElementById('user-input');
+		const btn = document.getElementById('send-btn');
+		const text = input.value.trim();
+
+		if (!text) return;
+
+		input.value = '';
+		input.disabled = true;
+		btn.disabled = true;
+
+		histories[currentRole].push({ type: 'user', content: text });
+		renderMessages();
+
+		try {
+			const response = await fetch(`${WORKER_URL}/api/chat`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'x-user-id': userId
+				},
+				body: JSON.stringify({ message: text, role: currentRole })
+			});
+
+			const data = await response.json();
+			
+			if (response.ok && data.response) {
+				histories[currentRole].push({ type: 'ai', content: data.response });
+			} else {
+				throw new Error(data.error || "Помилка сервера");
+			}
+		} catch (error) {
+			const detailedError = await getDetailedErrorMessage(error);
+			
+			histories[currentRole].push({ 
+				type: 'ai', 
+				content: detailedError 
+			});
+		} finally {
+			input.disabled = false;
+			btn.disabled = false;
+			renderMessages();
+			input.focus();
+			await checkStatus();
+		}
+	}
 
     function renderMessages() {
 		const container = document.getElementById('chat-messages');
@@ -496,7 +532,64 @@ button { margin-left: 10px; padding: 10px 20px; cursor: pointer; background: #00
 		}).join('');
 		container.scrollTop = container.scrollHeight;
 	}
+	
+	window.addEventListener('online', () => {
+		updateOnlineStatus(true);
+		checkStatus();
+	});
 
+	window.addEventListener('offline', () => {
+		updateOnlineStatus(false);
+	});
+
+	function updateOnlineStatus(isOnline) {
+		const statusBar = document.getElementById('status-bar');
+		const btn = document.getElementById('send-btn');
+		const input = document.getElementById('user-input');
+
+		if (!isOnline) {
+			statusBar.innerHTML = `📡 <strong>Відсутній інтернет:</strong> Перевірте з'єднання.`;
+			statusBar.style.backgroundColor = "#ffebee";
+			statusBar.style.color = "#c62828";
+			btn.disabled = true;
+			input.disabled = true;
+		} else {
+			statusBar.style.backgroundColor = "#f8f9fa";
+			statusBar.style.color = "#666";
+			// Стан кнопок оновить функція checkStatus()
+		}
+	}
+
+	async function checkStatus() {
+		const statusBar = document.getElementById('status-bar');
+		const input = document.getElementById('user-input');
+		const btn = document.getElementById('send-btn');
+		statusBar.innerHTML = '⏳ Перевірка доступності сервісу...';
+		btn.disabled = true;
+		input.disabled = true;
+		try {
+			const res = await fetch(`${WORKER_URL}/api/health`, {
+				headers: { 'x-user-id': userId }
+			});
+			const data = await res.json();
+
+			if (data.canQuery) {
+				statusBar.innerHTML = `✅ Доступно запитів: <strong>${data.remaining}</strong>`;
+				input.disabled = false;
+				btn.disabled = false;
+			} else {
+				let reason = data.remaining <= 0 ? "Вичерпано денний ліміт (10/10)." : "ШІ-модель тимчасово перевантажена. Спробуйте завтра.";
+				statusBar.innerHTML = `❌ <strong>Доступ обмежено:</strong> ${reason}`;
+				input.disabled = true;
+				btn.disabled = true;
+				input.placeholder = "Спробуйте пізніше...";
+			}
+		} catch (e) {
+			statusBar.innerHTML = "⚠️ Помилка зв'язку з сервером.";
+		}
+	}
+
+	checkStatus();
 </script>
 
 </body>
