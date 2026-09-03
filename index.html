@@ -644,7 +644,7 @@ function acceptPrivacy() {
 				input.disabled = false;
 				btn.disabled = false;
 			} else {
-				let reason = data.remaining <= 0 ? "🛑 **Денний ліміт вичерпано.** Ви використали всі 10 безкоштовних запитів на сьогодні. Повертайтеся завтра!" : "ШІ-модель тимчасово перевантажена. Спробуйте завтра.";
+				let reason = data.remaining <= 0 ? "🛑 Денний ліміт вичерпано. Ви використали всі 10 безкоштовних запитів на сьогодні. Повертайтеся завтра!" : "ШІ-модель тимчасово перевантажена. Спробуйте завтра.";
 				statusBar.innerHTML = `❌ <strong>Доступ обмежено:</strong> ${reason}`;
 				input.disabled = true;
 				btn.disabled = true;
