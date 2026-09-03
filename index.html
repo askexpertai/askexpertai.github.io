@@ -389,11 +389,62 @@ button { margin-left: 10px; padding: 10px 20px; cursor: pointer; background: #00
             border-color: var(--border-color);
             cursor: not-allowed;
         }
+		.modal-overlay {
+			position: fixed;
+			top: 0; left: 0; width: 100%; height: 100%;
+			background: rgba(0, 0, 0, 0.85);
+			display: flex; justify-content: center; align-items: center;
+			z-index: 9999; /* Поверх усього */
+			backdrop-filter: blur(5px);
+			display: none; /* Спочатку приховано */
+		}
 
+		.modal-content {
+			background: white;
+			padding: 30px;
+			border-radius: 15px;
+			max-width: 500px;
+			width: 90%;
+			text-align: left;
+			box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+		}
+
+		.modal-content h2 { color: #2c3e50; margin-top: 0; }
+		.modal-content ul { padding-left: 20px; color: #555; }
+		.modal-content li { margin-bottom: 10px; }
+
+		.btn-accept {
+			width: 100%;
+			padding: 12px;
+			background: #3498db;
+			color: white;
+			border: none;
+			border-radius: 8px;
+			cursor: pointer;
+			font-weight: bold;
+			font-size: 1.1em;
+			margin-top: 15px;
+		}
+
+		.btn-accept:hover { background: #2980b9; }
     </style>
 </head>
 <body>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<div id="privacy-modal" class="modal-overlay">
+    <div class="modal-content">
+        <h2>🛡️ Важливе зауваження</h2>
+        <p>AskExpertAI використовує штучний інтелект для надання послуг. Будь ласка, пам'ятайте:</p>
+        <ul>
+            <li><strong>Не передавайте конфіденційну інформацію:</strong> адреси, номери телефонів, паролі або повні імена тощо.</li>
+            <li><strong>Це не заміна ветеринара/лікаря/перекладача:</strong> відповіді мають інформаційний характер. У критичних ситуаціях звертайтеся до фахівця.</li>
+            <li><strong>Дані зберігаються:</strong> історія чату зберігається для покращення якості відповідей.</li>
+        </ul>
+        <button onclick="acceptPrivacy()" class="btn-accept">Я розумію та згоден</button>
+    </div>
+</div>
+
 <div class="browser-container">
     <div class="tabs-header">
         <div class="tab active" onclick="switchTab('vet')" data-role="vet">🐾 Ветеринар</div>
@@ -416,6 +467,21 @@ button { margin-left: 10px; padding: 10px 20px; cursor: pointer; background: #00
     </div>
 </div>
 
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Перевіряємо, чи була вже прийнята політика
+    const privacyAccepted = localStorage.getItem('privacyAccepted');
+    
+    if (!privacyAccepted) {
+        document.getElementById('privacy-modal').style.display = 'flex';
+    }
+});
+
+function acceptPrivacy() {
+    localStorage.setItem('privacyAccepted', 'true');
+    document.getElementById('privacy-modal').style.display = 'none';
+}
+</script>
 <script>
     const WORKER_URL = 'https://aiexpert-fd1f.basyliydelcreatore-01.workers.dev';
     
