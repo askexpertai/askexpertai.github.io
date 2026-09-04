@@ -544,33 +544,33 @@ function acceptPrivacy() {
         renderMessages();
     }
 
-	async function getDetailedErrorMessage(error) {
+	async function getDetailedErrorMessage(jsError, serverData = null) {
+		if (serverData && serverData.error === 'overloaded') {
+			return "⏳ **ШІ перевантажений.** Сервіс отримав забагато запитів одночасно. Спробуйте ще раз через декілька хвилин.";
+		}
+
+		if (serverData && serverData.error === 'api_error') {
+			return "⚙️ **Помилка ШІ-сервісу.** Виникла технічна проблема при зверненні до Gemini. Спробуйте пізніше.";
+		}
+	
 		if (!navigator.onLine) {
-			return "📡 **Відсутній інтернет.** Будь ласка, перевірте підключення до мережі Wi-Fi або мобільного зв'язку.";
+			return "📡 **Відсутній інтернет.** Перевірте підключення.";
 		}
 
 		try {
 			const res = await fetch(`${WORKER_URL}/api/health`, {
 				headers: { 'x-user-id': userId }
 			});
-			const status = await res.json();
+			const data = await res.json();
 
-			if (status.remaining <= 0) {
+			if (data.remaining <= 0) {
 				return "🛑 **Денний ліміт вичерпано.** Ви використали всі 10 безкоштовних запитів на сьогодні. Повертайтеся завтра!";
 			}
-
-			if (status.geminiStatus === 'overloaded') {
-				return "⏳ **Google Gemini перевантажений.** Сервіс отримав забагато запитів одночасно. Спробуйте ще раз через 60 секунд.";
-			}
-
-			if (status.geminiStatus === 'error') {
-				return "⚙️ **Проблема з API-ключем.** Здається, виникла технічна проблема на стороні конфігурації ШІ.";
-			}
 		} catch (e) {
-			return "🔌 **Сервер недоступний.** Не вдалося зв'язатися з обробником запитів. Можливо, сервіс на технічному обслуговуванні.";
+			return "🔌 **Сервер недоступний.** Не вдалося зв'язатися з обробником.";
 		}
 
-		return `⚠️ **Непередбачена помилка:** ${error.message || "З'єднання розірвано"}. Спробуйте оновити сторінку.`;
+		return `⚠️ **Помилка:** ${jsError.message || "Невідома помилка"}. Спробуйте оновити сторінку.`;
 	}
 
 	async function handleSend() {
@@ -618,15 +618,18 @@ function acceptPrivacy() {
 			if (response.ok && data.response) {
 				histories[currentRole].push({ type: 'ai', content: data.response });
 			} else {
-				throw new Error(data.error || "Помилка сервера");
+				console.warn(`[Chat] Server returned error. Status: ${response.status}`, data);
+				const detailedError = await getDetailedErrorMessage(new Error("Server Error"), data);
+				histories[currentRole].push({ type: 'ai', content: detailedError });
 			}
 		} catch (error) {
+			console.error("[Chat] Network or Runtime Error:", error);
 		
 			if (document.getElementById('ai-loading-indicator')) {
 				document.getElementById('ai-loading-indicator').remove();
 			}
 		
-			const detailedError = await getDetailedErrorMessage(error);
+			const detailedError = await getDetailedErrorMessage(error, null);
 			
 			histories[currentRole].push({ 
 				type: 'ai', 
@@ -715,6 +718,7 @@ function acceptPrivacy() {
 			btn.disabled = false;
 		
 		} catch (error) {
+			console.error("[Health] Check failed:", error);
 			let errorMsg = `❌ <strong>Доступ обмежено:</strong> 🔌 Сервер недоступний або відсутній інтернет.`;
 			if (error.name === 'TimeoutError') {
 				errorMsg = `❌ <strong>Доступ обмежено:</strong> 🔌 Сервер недоступний. Не вдалося зв'язатися з обробником запитів. Можливо, сервіс на технічному обслуговуванні.`;
