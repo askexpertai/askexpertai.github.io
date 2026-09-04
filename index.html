@@ -427,6 +427,41 @@ button { margin-left: 10px; padding: 10px 20px; cursor: pointer; background: #00
 		}
 
 		.btn-accept:hover { background: #2980b9; }
+				/* Стиль контейнера для крапок */
+		.typing-indicator {
+			display: flex;
+			gap: 4px;
+			padding: 5px 10px;
+			align-items: center;
+		}
+
+		.typing-indicator span {
+			width: 6px;
+			height: 6px;
+			background-color: #7f8c8d;
+			border-radius: 50%;
+			display: inline-block;
+			animation: typing 1.4s infinite ease-in-out both;
+		}
+
+		/* Затримка для кожної крапки, щоб створити ефект хвилі */
+		.typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+		.typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+
+		@keyframes typing {
+			0%, 80%, 100% { transform: scale(0); opacity: 0.3; }
+			40% { transform: scale(1); opacity: 1; }
+		}
+
+		/* Додатковий стиль для повідомлення очікування */
+		.message.ai.loading {
+			background-color: #f1f2f6;
+			border: 1px solid #e1e1e1;
+			min-width: 60px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
     </style>
 </head>
 <body>
@@ -525,7 +560,7 @@ function acceptPrivacy() {
 			}
 
 			if (status.geminiStatus === 'overloaded') {
-				return "⏳ **Google Gemini перевантажений.** Сервіс отримав забагато запитів одночасно. Спробуйте ще раз через 30-60 секунд.";
+				return "⏳ **Google Gemini перевантажений.** Сервіс отримав забагато запитів одночасно. Спробуйте ще раз через 60 секунд.";
 			}
 
 			if (status.geminiStatus === 'error') {
@@ -551,6 +586,18 @@ function acceptPrivacy() {
 
 		histories[currentRole].push({ type: 'user', content: text });
 		renderMessages();
+			
+		const container = document.getElementById('chat-messages');
+		const loadingMsg = document.createElement('div');
+		loadingMsg.id = 'ai-loading-indicator';
+		loadingMsg.className = 'message ai loading';
+		loadingMsg.innerHTML = `
+			<div class="typing-indicator">
+				<span></span><span></span><span></span>
+			</div>
+		`;
+		container.appendChild(loadingMsg);
+		container.scrollTop = container.scrollHeight;
 
 		try {
 			const response = await fetch(`${WORKER_URL}/api/chat`, {
@@ -564,12 +611,21 @@ function acceptPrivacy() {
 
 			const data = await response.json();
 			
+			if (document.getElementById('ai-loading-indicator')) {
+				document.getElementById('ai-loading-indicator').remove();
+			}
+			
 			if (response.ok && data.response) {
 				histories[currentRole].push({ type: 'ai', content: data.response });
 			} else {
 				throw new Error(data.error || "Помилка сервера");
 			}
 		} catch (error) {
+		
+			if (document.getElementById('ai-loading-indicator')) {
+				document.getElementById('ai-loading-indicator').remove();
+			}
+		
 			const detailedError = await getDetailedErrorMessage(error);
 			
 			histories[currentRole].push({ 
@@ -596,7 +652,11 @@ function acceptPrivacy() {
 				</div>
 			`;
 		}).join('');
-		container.scrollTop = container.scrollHeight;
+		const lastMessage = container.lastElementChild;
+
+		if (lastMessage) {
+			lastMessage.scrollIntoView({ behavior: 'smooth', block: 'start' });
+		}
 	}
 	
 	window.addEventListener('online', () => {
@@ -639,20 +699,35 @@ function acceptPrivacy() {
 			});
 			const data = await res.json();
 
-			if (data.canQuery) {
-				statusBar.innerHTML = `✅ Доступно запитів: <strong>${data.remaining}</strong>`;
-				input.disabled = false;
-				btn.disabled = false;
-			} else {
-				let reason = data.remaining <= 0 ? "🛑 Денний ліміт вичерпано. Ви використали всі 10 безкоштовних запитів на сьогодні. Повертайтеся завтра!" : "ШІ-модель тимчасово перевантажена. Спробуйте завтра.";
-				statusBar.innerHTML = `❌ <strong>Доступ обмежено:</strong> ${reason}`;
+			if (data.remaining <= 0) {
+				statusBar.innerHTML = `❌ <strong>Доступ обмежено:</strong> 🛑 Денний ліміт вичерпано. Ви використали всі 10 безкоштовних запитів на сьогодні. Повертайтеся завтра!`;
+				statusBar.style.color = "#c62828";
 				input.disabled = true;
 				btn.disabled = true;
 				input.placeholder = "Спробуйте пізніше...";
+				return;
 			}
-		} catch (e) {
-			statusBar.innerHTML = "⚠️ Помилка зв'язку з сервером.";
+            
+			let statusParts = [];
+			statusBar.innerHTML = `✅ Доступно запитів: <strong>${data.remaining}</strong>`;
+			statusBar.style.color = "#2e7d32";
+			input.disabled = false;
+			btn.disabled = false;
+		
+		} catch (error) {
+			let errorMsg = `❌ <strong>Доступ обмежено:</strong> 🔌 Сервер недоступний або відсутній інтернет.`;
+			if (error.name === 'TimeoutError') {
+				errorMsg = `❌ <strong>Доступ обмежено:</strong> 🔌 Сервер недоступний. Не вдалося зв'язатися з обробником запитів. Можливо, сервіс на технічному обслуговуванні.`;
+			}
+			statusBar.innerHTML = `❌ ${errorMsg}`;
+			statusBar.style.backgroundColor = "#ffebee";
+			statusBar.style.color = "#c62828";
+			input.disabled = true;
+			btn.disabled = true;
+			input.placeholder = "Спробуйте пізніше...";
 		}
+
+		
 	}
 
 	checkStatus();
