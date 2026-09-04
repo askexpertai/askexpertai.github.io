@@ -550,6 +550,8 @@ function acceptPrivacy() {
 		}
 
 		if (serverData && serverData.error === 'api_error') {
+			const debugInfo = serverData.details ? `<br><small style="opacity: 0.7">Деталі: ${serverData.details}</small>` : "";
+			console.log("Помилка ШІ-сервісу. Виникла технічна проблема при зверненні до Gemini. Деталі: " + serverData.details);
 			return "⚙️ **Помилка ШІ-сервісу.** Виникла технічна проблема при зверненні до Gemini. Спробуйте пізніше.";
 		}
 	
