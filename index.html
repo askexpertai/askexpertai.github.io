@@ -3,252 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Миттєва Безкоштовна Професійна Допомога Експертного Фахівця ШІ: лікар, ветеринар та перекладач</title>
+    <title>Миттєва Безкоштовна Професійна Допомога Експертного Фахівця ШІ: лікар, ветеринар та перекладач | AskExpertAI</title>
     <style>
-	
-	<!--
-        :root {
-            --bg-color: #f0f2f5;
-            --active-tab: #ffffff;
-            --inactive-tab: #dcdde1;
-            --border-color: #bdc3c7;
-            --text-color: #2f3640;
-            --accent-color: #3498db;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            color: var(--text-color);
-        }
-
-        .browser-container {
-            width: 90%;
-            max-width: 900px;
-            height: 80vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* Стилізація вкладок */
-        .tabs-header {
-            display: flex;
-            padding-left: 15px;
-            z-index: 2;
-        }
-
-        .tab {
-            padding: 12px 25px;
-            background: var(--inactive-tab);
-            border: 1px solid var(--border-color);
-            border-bottom: none;
-            border-radius: 12px 12px 0 0;
-            cursor: pointer;
-            position: relative;
-            margin-right: -10px; /* Ефект накладання */
-            transition: all 0.3s ease;
-            user-select: none;
-            font-size: 14px;
-            color: #7f8c8d;
-        }
-
-        .tab.active {
-            background: var(--active-tab);
-            z-index: 10;
-            color: var(--text-color);
-            font-weight: 600;
-            box-shadow: 0 -4px 10px rgba(0,0,0,0.05);
-            padding-top: 10px;
-            margin-top: -2px;
-        }
-
-        .tab:hover:not(.active) {
-            background: #e8e8e8;
-        }
-
-        /* Вікно чату */
-        .chat-window {
-            flex: 1;
-            background: var(--active-tab);
-            border: 1px solid var(--border-color);
-            border-radius: 0 12px 12px 12px;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            position: relative;
-            z-index: 5;
-            margin-top: -1px;
-        }
-
-        .messages-container {
-            flex: 1;
-            padding: 25px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            background-image: radial-gradient(#e5e7eb 0.5px, transparent 0.5px);
-            background-size: 20px 20px;
-        }
-
-        .message {
-            max-width: 80%;
-            padding: 12px 18px;
-            border-radius: 15px;
-            line-height: 1.5;
-            font-size: 15px;
-        }
-
-        .message.user {
-            align-self: flex-end;
-            background-color: var(--accent-color);
-            color: white;
-            border-bottom-right-radius: 2px;
-        }
-
-        .message.ai {
-            align-self: flex-start;
-            background-color: #f1f2f6;
-            color: var(--text-color);
-            border-bottom-left-radius: 2px;
-            border: 1px solid #e1e1e1;
-        }
-
-        /* Область введення */
-        .input-area {
-            padding: 20px;
-            border-top: 1px solid #eee;
-            display: flex;
-            gap: 10px;
-        }
-
-        input[type="text"] {
-            flex: 1;
-            padding: 12px 15px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            outline: none;
-            font-size: 15px;
-        }
-
-        input[type="text"]:focus {
-            border-color: var(--accent-color);
-        }
-
-        button {
-            padding: 10px 25px;
-            background-color: var(--accent-color);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: background 0.2s;
-        }
-
-        button:hover {
-            background-color: #2980b9;
-        }
-
-        button:disabled {
-            background-color: #bdc3c7;
-        }
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		:root {
-  --active-bg: #ffffff;
-  --inactive-bg: #e0e0e0;
-  --border-color: #ccc;
-}
-
-.browser-container {
-  max-width: 800px;
-  margin: 20px auto;
-  font-family: sans-serif;
-}
-
-.tabs-header {
-  display: flex;
-  padding-left: 10px;
-  gap: -5px; /* Невелике накладання */
-}
-
-.tab {
-  padding: 10px 25px;
-  background: var(--inactive-bg);
-  border: 1px solid var(--border-color);
-  border-bottom: none;
-  border-radius: 10px 10px 0 0;
-  cursor: pointer;
-  position: relative;
-  z-index: 1;
-  transition: all 0.2s;
-  margin-right: -10px; /* Створює ефект перекриття */
-}
-
-.tab.active {
-  background: var(--active-bg);
-  z-index: 10; /* Активна вкладка завжди зверху */
-  font-weight: bold;
-  box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
-}
-
-.chat-window {
-  background: var(--active-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 0 0 10px 10px;
-  height: 500px;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  z-index: 5; /* Вище за неактивні вкладки, нижче за активну */
-  margin-top: -1px; /* Прибирає подвійну лінію кордону */
-}
-
-.messages-container {
-  flex: 1;
-  padding: 20px;
-  overflow-y: auto;
-  background: #f9f9f9;
-}
-
-.input-area {
-  display: flex;
-  padding: 15px;
-  border-top: 1px solid var(--border-color);
-}
-
-input { flex: 1; padding: 10px; border-radius: 5px; border: 1px solid #ddd; }
-button { margin-left: 10px; padding: 10px 20px; cursor: pointer; background: #007bff; color: white; border: none; border-radius: 5px; }
-
--->
-
-       :root {
+	    :root {
             --bg-color: #e9ecef;
             --active-tab: #ffffff;
             --inactive-tab: #ced4da;
             --border-color: #adb5bd;
             --text-color: #212529;
-            --accent-color: #2b2d42; /* Більш професійний темний акцент */
+            --accent-color: #2b2d42;
             --user-msg: #007bff;
         }
 
         * {
             box-sizing: border-box;
-            border-radius: 0 !important; /* Глобальне скасування заокруглень */
-        }
+            border-radius: 0 !important;
+		}
 
         body {
             background-color: var(--bg-color);
@@ -269,10 +39,9 @@ button { margin-left: 10px; padding: 10px 20px; cursor: pointer; background: #00
             flex-direction: column;
         }
 
-        /* Стилізація вкладок */
         .tabs-header {
             display: flex;
-            padding-left: 0; /* Прибрано відступ зліва */
+            padding-left: 0;
             z-index: 2;
         }
 
@@ -283,7 +52,7 @@ button { margin-left: 10px; padding: 10px 20px; cursor: pointer; background: #00
             border-bottom: none;
             cursor: pointer;
             position: relative;
-            margin-right: -1px; /* Чітке прилягання без накладання */
+            margin-right: -1px;
             transition: background 0.2s ease;
             user-select: none;
             font-size: 14px;
@@ -297,21 +66,20 @@ button { margin-left: 10px; padding: 10px 20px; cursor: pointer; background: #00
             z-index: 10;
             color: var(--text-color);
             font-weight: 700;
-            border-top: 3px solid var(--accent-color); /* Акцент зверху */
+            border-top: 3px solid var(--accent-color);
         }
 
         .tab:hover:not(.active) {
             background: #dee2e6;
         }
 
-        /* Вікно чату */
         .chat-window {
             flex: 1;
             background: var(--active-tab);
             border: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
-            box-shadow: 5px 5px 0px rgba(0,0,0,0.05); /* Рівна тінь */
+            box-shadow: 5px 5px 0px rgba(0,0,0,0.05);
             position: relative;
             z-index: 5;
             margin-top: -1px;
@@ -327,7 +95,6 @@ button { margin-left: 10px; padding: 10px 20px; cursor: pointer; background: #00
             flex-direction: column;
             gap: 10px;
             background-color: #ffffff;
-            /* Легка сітка для фону */
             background-image: linear-gradient(#f8f9fa 1px, transparent 1px), linear-gradient(90deg, #f8f9fa 1px, transparent 1px);
             background-size: 20px 20px;
         }
@@ -353,12 +120,11 @@ button { margin-left: 10px; padding: 10px 20px; cursor: pointer; background: #00
             color: var(--text-color);
         }
 
-        /* Область введення */
         .input-area {
             padding: 15px;
             border-top: 1px solid var(--border-color);
             display: flex;
-            gap: 0; /* Прибираємо проміжок між інпутом і кнопкою для монолітності */
+            gap: 0;
         }
 
         input[type="text"] {
@@ -382,7 +148,7 @@ button { margin-left: 10px; padding: 10px 20px; cursor: pointer; background: #00
             cursor: pointer;
             font-weight: 600;
             transition: opacity 0.2s;
-            margin-left: -1px; /* Злиття з інпутом */
+            margin-left: -1px;
         }
 
         button:hover {
@@ -399,9 +165,9 @@ button { margin-left: 10px; padding: 10px 20px; cursor: pointer; background: #00
 			top: 0; left: 0; width: 100%; height: 100%;
 			background: rgba(0, 0, 0, 0.85);
 			display: flex; justify-content: center; align-items: center;
-			z-index: 9999; /* Поверх усього */
+			z-index: 9999;
 			backdrop-filter: blur(5px);
-			display: none; /* Спочатку приховано */
+			display: none;
 		}
 
 		.modal-content {
@@ -432,7 +198,7 @@ button { margin-left: 10px; padding: 10px 20px; cursor: pointer; background: #00
 		}
 
 		.btn-accept:hover { background: #2980b9; }
-				/* Стиль контейнера для крапок */
+				
 		.typing-indicator {
 			display: flex;
 			gap: 4px;
@@ -449,7 +215,6 @@ button { margin-left: 10px; padding: 10px 20px; cursor: pointer; background: #00
 			animation: typing 1.4s infinite ease-in-out both;
 		}
 
-		/* Затримка для кожної крапки, щоб створити ефект хвилі */
 		.typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
 		.typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
 
@@ -458,7 +223,6 @@ button { margin-left: 10px; padding: 10px 20px; cursor: pointer; background: #00
 			40% { transform: scale(1); opacity: 1; }
 		}
 
-		/* Додатковий стиль для повідомлення очікування */
 		.message.ai.loading {
 			background-color: #f1f2f6;
 			border: 1px solid #e1e1e1;
@@ -509,7 +273,6 @@ button { margin-left: 10px; padding: 10px 20px; cursor: pointer; background: #00
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // Перевіряємо, чи була вже прийнята політика
     const privacyAccepted = localStorage.getItem('privacyAccepted');
     
     if (!privacyAccepted) {
