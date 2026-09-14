@@ -231,237 +231,217 @@
 			align-items: center;
 			justify-content: center;
 		}
-		/* Додайте або замініть ці частини у вашому <style> */
 
-:root {
-    /* Додаємо змінну для безпечних зон (iOS Notch) */
-    --safe-area-bottom: env(safe-area-inset-bottom, 0px);
-}
+		:root {
+			--safe-area-bottom: env(safe-area-inset-bottom, 0px);
+		}
 
-body {
-    /* Виправляємо проблему 100vh на мобільних (зникаючі бари браузера) */
-    height: 100dvh; 
-    overflow: hidden; /* Запобігаємо зайвому скролу всього тіла */
-}
+		body {
+			height: 100dvh; 
+			overflow: hidden;
+		}
 
-.browser-container {
-    width: 100%; /* На мобільних займаємо всю ширину */
-    max-width: 1000px;
-    height: 100dvh;
-    padding: 0;
-}
+		.browser-container {
+			width: 100%;
+			max-width: 1000px;
+			height: 100dvh;
+			padding: 0;
+		}
 
-/* Адаптація табів */
-.tabs-header {
-    flex-wrap: nowrap;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none; /* Приховуємо скролбар для чистоти */
-}
+		.tabs-header {
+			flex-wrap: nowrap;
+			-webkit-overflow-scrolling: touch;
+			scrollbar-width: none;
+		}
 
-.tabs-header::-webkit-scrollbar {
-    display: none;
-}
+		.tabs-header::-webkit-scrollbar {
+			display: none;
+		}
 
-.tab {
-    flex: 1;
-    text-align: center;
-    padding: 15px 10px; /* Більша зона для натискання */
-    font-size: 12px; /* Трохи менший шрифт для екранів смартфонів */
-    white-space: nowrap;
-}
+		.tab {
+			flex: 1;
+			text-align: center;
+			padding: 15px 10px;
+			font-size: 12px;
+			white-space: nowrap;
+		}
 
-/* Чат-вікно */
-.chat-window {
-    height: 100%;
-    box-shadow: none; /* Прибираємо тінь на мобільних для чистоти */
-    border-left: none;
-    border-right: none;
-}
+		.chat-window {
+			height: 100%;
+			box-shadow: none;
+			border-left: none;
+			border-right: none;
+		}
 
-.messages-container {
-    /* Використовуємо flex-grow замість фіксованого calc для кращої стабільності */
-    flex: 1;
-    height: auto; 
-    padding: 15px;
-}
+		.messages-container {
+			flex: 1;
+			height: auto; 
+			padding: 15px;
+		}
 
-.message {
-    max-width: 90%; /* Більше простору для тексту на вузьких екранах */
-    font-size: 14px;
-    margin-bottom: 5px;
-}
+		.message {
+			max-width: 90%;
+			font-size: 14px;
+			margin-bottom: 5px;
+		}
 
-/* Покращена зона введення */
-.input-area {
-    padding: 10px;
-    padding-bottom: calc(10px + var(--safe-area-bottom)); /* Враховуємо смужку Home на iPhone */
-    background: #fff;
-}
+		.input-area {
+			padding: 10px;
+			padding-bottom: calc(10px + var(--safe-area-bottom));
+			background: #fff;
+		}
 
-input[type="text"] {
-    font-size: 16px !important; /* ВАЖЛИВО: запобігає авто-зуму в iOS при фокусі */
-    padding: 12px;
-}
+		input[type="text"] {
+			font-size: 16px !important;
+			padding: 12px;
+		}
 
-button {
-    padding: 0 20px;
-}
+		button {
+			padding: 0 20px;
+		}
 
-/* Адаптація модального вікна */
-.modal-content {
-    width: 95%;
-    padding: 20px;
-    margin: 10px;
-}
+		<!--.modal-content {
+			width: 95%;
+			padding: 20px;
+			margin: 10px;
+		}-->
 
-/* Медіа-запит для десктопів, щоб повернути відступи */
-@media (min-width: 768px) {
-    .browser-container {
-        width: 95%;
-        height: 85vh;
-    }
-    .tab {
-        font-size: 14px;
-    }
-}
-/* 1. Встановлюємо жорсткі межі для всього екрана */
-html, body {
-    height: 100dvh;
-    margin: 0;
-    padding: 0;
-    overflow: hidden; /* Забороняємо скрол самого тіла */
-}
+		@media (min-width: 768px) {
+			.browser-container {
+				width: 95%;
+				height: 85vh;
+			}
+			.tab {
+				font-size: 14px;
+			}
+		}
 
-body {
-    display: flex;
-    flex-direction: column;
-}
+		html, body {
+			height: 100dvh;
+			margin: 0;
+			padding: 0;
+			overflow: hidden;
+		}
 
-/* 2. Контейнер тепер чітко вписаний у в'юпорт */
-.browser-container {
-    width: 100%;
-    max-width: 1000px;
-    height: 100dvh; /* Займає рівно 100% видимої висоти */
-    display: flex;
-    flex-direction: column;
-    margin: 0 auto;
-}
+		body {
+			display: flex;
+			flex-direction: column;
+		}
 
-/* 3. Вікно чату має займати весь простір під табами */
-.chat-window {
-    flex: 1; /* Це змушує вікно розтягнутися до низу, але не далі */
-    display: flex;
-    flex-direction: column;
-    overflow: hidden; /* Важливо: не даємо вікну розширюватися */
-    background: var(--active-tab);
-    border: 1px solid var(--border-color);
-    margin-top: -1px;
-}
+		.browser-container {
+			width: 100%;
+			max-width: 1000px;
+			height: 100dvh;
+			display: flex;
+			flex-direction: column;
+			margin: 0 auto;
+		}
 
-/* 4. Контейнер повідомлень — єдиний елемент зі скролом */
-.messages-container {
-    flex: 1; /* Забирає весь вільний простір між статус-баром та інпутом */
-    overflow-y: auto; /* Скрол тільки тут */
-    -webkit-overflow-scrolling: touch;
-    padding: 15px;
-    height: auto; /* Прибираємо старі calc() */
-}
+		.chat-window {
+			flex: 1;
+			display: flex;
+			flex-direction: column;
+			overflow: hidden;
+			background: var(--active-tab);
+			border: 1px solid var(--border-color);
+			margin-top: -1px;
+		}
 
-/* 5. Інпут завжди притиснутий до низу */
-.input-area {
-    flex-shrink: 0; /* Забороняємо інпуту стискатися або випадати */
-    background: white;
-    padding: 15px;
-    padding-bottom: calc(15px + env(safe-area-inset-bottom));
-    border-top: 1px solid var(--border-color);
-    display: flex;
-}
-.message {
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    padding: 12px 15px 8px 15px; /* Зменшуємо нижній паддінг, бо там буде кнопка */
-}
+		.messages-container {
+			flex: 1;
+			overflow-y: auto;
+			-webkit-overflow-scrolling: touch;
+			padding: 15px;
+			height: auto;
+		}
 
-.msg-content {
-    word-wrap: break-word;
-    margin-bottom: 5px;
-}
+		.input-area {
+			flex-shrink: 0;
+			background: white;
+			padding: 15px;
+			padding-bottom: calc(15px + env(safe-area-inset-bottom));
+			border-top: 1px solid var(--border-color);
+			display: flex;
+		}
+		.message {
+			display: flex;
+			flex-direction: column;
+			position: relative;
+			padding: 12px 15px 8px 15px;
+		}
 
-.copy-area {
-    display: flex;
-    justify-content: flex-end; /* Кнопка буде праворуч внизу */
-    margin-top: 4px;
-    border-top: 1px solid rgba(0, 0, 0, 0.05); /* Легка лінія розмежування */
-    padding-top: 4px;
-}
+		.msg-content {
+			word-wrap: break-word;
+			margin-bottom: 5px;
+		}
 
-/* Для повідомлень користувача лінія має бути світлішою */
-.message.user .copy-area {
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
+		.copy-area {
+			display: flex;
+			justify-content: flex-end;
+			margin-top: 4px;
+			border-top: 1px solid rgba(0, 0, 0, 0.05);
+			padding-top: 4px;
+		}
 
-.copy-btn {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    font-size: 12px;
-    color: inherit;
-    opacity: 0.5;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    padding: 4px 8px;
-    transition: opacity 0.2s;
-}
+		.message.user .copy-area {
+			border-top: 1px solid rgba(255, 255, 255, 0.1);
+		}
 
-.copy-btn:hover {
-    opacity: 1;
-}
+		.copy-btn {
+			background: transparent;
+			border: none;
+			cursor: pointer;
+			font-size: 12px;
+			color: inherit;
+			opacity: 0.5;
+			display: flex;
+			align-items: center;
+			gap: 5px;
+			padding: 4px 8px;
+			transition: opacity 0.2s;
+		}
 
-.copy-btn svg {
-    width: 14px;
-    height: 14px;
-    fill: currentColor;
-}
+		.copy-btn:hover {
+			opacity: 1;
+		}
 
-.input-area {
-    display: flex;
-    padding: 15px;
-    background: white;
-    border-top: 1px solid var(--border-color);
-    
-    /* Важливо для запобігання виходу за межі: */
-    width: 100%;
-    box-sizing: border-box;  /* Паддінги не збільшують ширину 100% */
-}
+		.copy-btn svg {
+			width: 14px;
+			height: 14px;
+			fill: currentColor;
+		}
 
-input[type="text"] {
-    flex: 1;                 /* Поле займає весь вільний простір */
-    min-width: 0;            /* Запобігає розтягуванню інпуту за межі флекс-контейнера */
-    padding: 12px;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    outline: none;
-}
+		.input-area {
+			display: flex;
+			padding: 15px;
+			background: white;
+			border-top: 1px solid var(--border-color);
+			width: 100%;
+			box-sizing: border-box;
+		}
 
-button#send-btn {
-    flex-shrink: 0;          /* Забороняємо кнопці стискатися */
-    white-space: nowrap;     /* Забороняємо тексту в кнопці переноситися */
-    padding: 10px 20px;
-    /* ... ваші інші стилі (колір, фон) ... */
-}
+		input[type="text"] {
+			flex: 1;
+			min-width: 0;
+			padding: 12px;
+			border: 1px solid var(--border-color);
+			border-radius: 8px;
+			outline: none;
+		}
 
-p {
- margin-top: 0;
- }
+		button#send-btn {
+			flex-shrink: 0;
+			white-space: nowrap;
+			padding: 10px 20px;
+		}
+
+		p {
+			margin-top: 0;
+		 }
     </style>
 	<script>
-    // Миттєво визначаємо роль до рендерингу body
-    window.currentRole = localStorage.getItem('lastSelectedRole') || 'vet';
-    
-    // Додаємо інлайновий стиль, щоб приховати "неправильні" таби відразу
-    document.documentElement.style.visibility = 'hidden'; 
+		window.currentRole = localStorage.getItem('lastSelectedRole') || 'vet';
+		document.documentElement.style.visibility = 'hidden'; 
 </script>
 </head>
 <body>
@@ -546,7 +526,7 @@ const histories = {
         await navigator.clipboard.writeText(textToCopy);
         
         label.innerText = 'Скопійовано!';
-        btn.style.color = '#2ecc71'; // Зелений колір при успіху
+        btn.style.color = '#2ecc71';
         
         setTimeout(() => {
             label.innerText = originalText;
@@ -733,7 +713,6 @@ document.addEventListener('DOMContentLoaded', () => {
 		} else {
 			statusBar.style.backgroundColor = "#f8f9fa";
 			statusBar.style.color = "#666";
-			// Стан кнопок оновить функція checkStatus()
 		}
 	}
 
