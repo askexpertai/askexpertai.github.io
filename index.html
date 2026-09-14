@@ -301,12 +301,10 @@ body {
 input[type="text"] {
     font-size: 16px !important; /* ВАЖЛИВО: запобігає авто-зуму в iOS при фокусі */
     padding: 12px;
-	width: 70%;
 }
 
 button {
     padding: 0 20px;
-	width: 30%;
 }
 
 /* Адаптація модального вікна */
@@ -377,7 +375,6 @@ body {
     padding-bottom: calc(15px + env(safe-area-inset-bottom));
     border-top: 1px solid var(--border-color);
     display: flex;
-	width: 100%;
 }
 .message {
     display: flex;
@@ -428,6 +425,32 @@ body {
     fill: currentColor;
 }
 
+.input-area {
+    display: flex;
+    padding: 15px;
+    background: white;
+    border-top: 1px solid var(--border-color);
+    
+    /* Важливо для запобігання виходу за межі: */
+    width: 100%;
+    box-sizing: border-box;  /* Паддінги не збільшують ширину 100% */
+}
+
+input[type="text"] {
+    flex: 1;                 /* Поле займає весь вільний простір */
+    min-width: 0;            /* Запобігає розтягуванню інпуту за межі флекс-контейнера */
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    outline: none;
+}
+
+button#send-btn {
+    flex-shrink: 0;          /* Забороняємо кнопці стискатися */
+    white-space: nowrap;     /* Забороняємо тексту в кнопці переноситися */
+    padding: 10px 20px;
+    /* ... ваші інші стилі (колір, фон) ... */
+}
 
     </style>
 	<script>
