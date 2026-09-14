@@ -231,7 +231,159 @@
 			align-items: center;
 			justify-content: center;
 		}
+		/* Додайте або замініть ці частини у вашому <style> */
+
+:root {
+    /* Додаємо змінну для безпечних зон (iOS Notch) */
+    --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+body {
+    /* Виправляємо проблему 100vh на мобільних (зникаючі бари браузера) */
+    height: 100dvh; 
+    overflow: hidden; /* Запобігаємо зайвому скролу всього тіла */
+}
+
+.browser-container {
+    width: 100%; /* На мобільних займаємо всю ширину */
+    max-width: 1000px;
+    height: 100dvh;
+    padding: 0;
+}
+
+/* Адаптація табів */
+.tabs-header {
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Приховуємо скролбар для чистоти */
+}
+
+.tabs-header::-webkit-scrollbar {
+    display: none;
+}
+
+.tab {
+    flex: 1;
+    text-align: center;
+    padding: 15px 10px; /* Більша зона для натискання */
+    font-size: 12px; /* Трохи менший шрифт для екранів смартфонів */
+    white-space: nowrap;
+}
+
+/* Чат-вікно */
+.chat-window {
+    height: 100%;
+    box-shadow: none; /* Прибираємо тінь на мобільних для чистоти */
+    border-left: none;
+    border-right: none;
+}
+
+.messages-container {
+    /* Використовуємо flex-grow замість фіксованого calc для кращої стабільності */
+    flex: 1;
+    height: auto; 
+    padding: 15px;
+}
+
+.message {
+    max-width: 90%; /* Більше простору для тексту на вузьких екранах */
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+/* Покращена зона введення */
+.input-area {
+    padding: 10px;
+    padding-bottom: calc(10px + var(--safe-area-bottom)); /* Враховуємо смужку Home на iPhone */
+    background: #fff;
+}
+
+input[type="text"] {
+    font-size: 16px !important; /* ВАЖЛИВО: запобігає авто-зуму в iOS при фокусі */
+    padding: 12px;
+}
+
+button {
+    padding: 0 20px;
+}
+
+/* Адаптація модального вікна */
+.modal-content {
+    width: 95%;
+    padding: 20px;
+    margin: 10px;
+}
+
+/* Медіа-запит для десктопів, щоб повернути відступи */
+@media (min-width: 768px) {
+    .browser-container {
+        width: 95%;
+        height: 85vh;
+    }
+    .tab {
+        font-size: 14px;
+    }
+}
+/* 1. Встановлюємо жорсткі межі для всього екрана */
+html, body {
+    height: 100dvh;
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Забороняємо скрол самого тіла */
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+/* 2. Контейнер тепер чітко вписаний у в'юпорт */
+.browser-container {
+    width: 100%;
+    max-width: 1000px;
+    height: 100dvh; /* Займає рівно 100% видимої висоти */
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+}
+
+/* 3. Вікно чату має займати весь простір під табами */
+.chat-window {
+    flex: 1; /* Це змушує вікно розтягнутися до низу, але не далі */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Важливо: не даємо вікну розширюватися */
+    background: var(--active-tab);
+    border: 1px solid var(--border-color);
+    margin-top: -1px;
+}
+
+/* 4. Контейнер повідомлень — єдиний елемент зі скролом */
+.messages-container {
+    flex: 1; /* Забирає весь вільний простір між статус-баром та інпутом */
+    overflow-y: auto; /* Скрол тільки тут */
+    -webkit-overflow-scrolling: touch;
+    padding: 15px;
+    height: auto; /* Прибираємо старі calc() */
+}
+
+/* 5. Інпут завжди притиснутий до низу */
+.input-area {
+    flex-shrink: 0; /* Забороняємо інпуту стискатися або випадати */
+    background: white;
+    padding: 15px;
+    padding-bottom: calc(15px + env(safe-area-inset-bottom));
+    border-top: 1px solid var(--border-color);
+    display: flex;
+}
     </style>
+	<script>
+    // Миттєво визначаємо роль до рендерингу body
+    window.currentRole = localStorage.getItem('lastSelectedRole') || 'vet';
+    
+    // Додаємо інлайновий стиль, щоб приховати "неправильні" таби відразу
+    document.documentElement.style.visibility = 'hidden'; 
+</script>
 </head>
 <body>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -272,13 +424,18 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-    const privacyAccepted = localStorage.getItem('privacyAccepted');
-    
-    if (!privacyAccepted) {
-        document.getElementById('privacy-modal').style.display = 'flex';
-    }
-});
+function switchTab(role) {
+    if (currentRole === role) return;
+    currentRole = role;
+
+    localStorage.setItem('lastSelectedRole', role);
+
+    document.querySelectorAll('.tab').forEach(t => {
+        t.classList.toggle('active', t.dataset.role === role);
+    });
+
+    renderMessages();
+}
 
 function acceptPrivacy() {
     localStorage.setItem('privacyAccepted', 'true');
@@ -287,9 +444,9 @@ function acceptPrivacy() {
 </script>
 <script>
     const WORKER_URL = 'https://aiexpert-fd1f.basyliydelcreatore-01.workers.dev';
-    
-    let currentRole = 'vet';
-    const histories = {
+let currentRole = window.currentRole;
+
+const histories = {
         vet: [{ type: 'ai', content: 'Я готовий допомогти вашому улюбленцю. Що сталося?' }],
         doctor: [{ type: 'ai', content: 'Я слухаю ваші скарги. Пам’ятайте, я лише ШІ-консультант.' }],
         translator: [{ type: 'ai', content: 'Надішліть текст для перекладу.' }]
@@ -300,17 +457,30 @@ function acceptPrivacy() {
         userId = crypto.randomUUID();
         localStorage.setItem('vet_ai_user_id', userId);
     }
+	
+function initialisation() {
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach(t => {
+        if (t.dataset.role === currentRole) {
+            t.classList.add('active');
+        } else {
+            t.classList.remove('active');
+        }
+    });
 
-    function switchTab(role) {
-        if (currentRole === role) return;
-        currentRole = role;
+    renderMessages();
 
-        document.querySelectorAll('.tab').forEach(t => {
-            t.classList.toggle('active', t.dataset.role === role);
-        });
+    document.documentElement.style.visibility = 'visible';
+}
 
-        renderMessages();
+initialisation();
+
+document.addEventListener('DOMContentLoaded', () => {
+    const privacyAccepted = localStorage.getItem('privacyAccepted');
+    if (!privacyAccepted) {
+        document.getElementById('privacy-modal').style.display = 'flex';
     }
+});
 
 	async function getDetailedErrorMessage(jsError, serverData = null) {
 		if (serverData && serverData.error === 'overloaded') {
