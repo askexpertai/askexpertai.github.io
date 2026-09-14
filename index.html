@@ -376,6 +376,56 @@ body {
     border-top: 1px solid var(--border-color);
     display: flex;
 }
+.message {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    padding: 12px 15px 8px 15px; /* Зменшуємо нижній паддінг, бо там буде кнопка */
+}
+
+.msg-content {
+    word-wrap: break-word;
+    margin-bottom: 5px;
+}
+
+.copy-area {
+    display: flex;
+    justify-content: flex-end; /* Кнопка буде праворуч внизу */
+    margin-top: 4px;
+    border-top: 1px solid rgba(0, 0, 0, 0.05); /* Легка лінія розмежування */
+    padding-top: 4px;
+}
+
+/* Для повідомлень користувача лінія має бути світлішою */
+.message.user .copy-area {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.copy-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    color: inherit;
+    opacity: 0.5;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 8px;
+    transition: opacity 0.2s;
+}
+
+.copy-btn:hover {
+    opacity: 1;
+}
+
+.copy-btn svg {
+    width: 14px;
+    height: 14px;
+    fill: currentColor;
+}
+
+
     </style>
 	<script>
     // Миттєво визначаємо роль до рендерингу body
@@ -458,6 +508,28 @@ const histories = {
         localStorage.setItem('vet_ai_user_id', userId);
     }
 	
+	async function copyToClipboard(btn, index) {
+    const textToCopy = histories[currentRole][index].content;
+    const label = btn.querySelector('span');
+    const originalText = label.innerText;
+
+    try {
+        await navigator.clipboard.writeText(textToCopy);
+        
+        label.innerText = 'Скопійовано!';
+        btn.style.color = '#2ecc71'; // Зелений колір при успіху
+        
+        setTimeout(() => {
+            label.innerText = originalText;
+            btn.style.color = ''; 
+        }, 2000);
+    } catch (err) {
+        label.innerText = 'Помилка';
+        console.error(err);
+    }
+}
+
+
 function initialisation() {
     const tabs = document.querySelectorAll('.tab');
     tabs.forEach(t => {
@@ -585,22 +657,29 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
     function renderMessages() {
-		const container = document.getElementById('chat-messages');
-		container.innerHTML = histories[currentRole].map(msg => {
-			const content = msg.type === 'ai' ? marked.parse(msg.content) : msg.content;
-			
-			return `
-				<div class="message ${msg.type}">
-					${content}
-				</div>
-			`;
-		}).join('');
-		const lastMessage = container.lastElementChild;
+    const container = document.getElementById('chat-messages');
+    container.innerHTML = histories[currentRole].map((msg, index) => {
+        const content = msg.type === 'ai' ? marked.parse(msg.content) : msg.content;
+        
+        return `
+            <div class="message ${msg.type}">
+                <div class="msg-content">${content}</div>
+                <div class="copy-area">
+                    <button class="copy-btn" onclick="copyToClipboard(this, ${index})">
+                        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                        <span>Копіювати</span>
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    const lastMessage = container.lastElementChild;
+    if (lastMessage) {
+        lastMessage.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
 
-		if (lastMessage) {
-			lastMessage.scrollIntoView({ behavior: 'smooth', block: 'start' });
-		}
-	}
 	
 	window.addEventListener('online', () => {
 		updateOnlineStatus(true);
